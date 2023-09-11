@@ -1,0 +1,50 @@
+From 414d0e3aede4d79c42cf8d33ca3fe8dd472b8a89 Mon Sep 17 00:00:00 2001
+From: Azorlogh <bott.alix@gmail.com>
+Date: Mon, 11 Sep 2023 14:33:28 +0200
+Subject: [PATCH] bugfix
+
+---
+ t-rex-gdal/Cargo.toml         | 4 ++--
+ t-rex-gdal/src/gdal_fields.rs | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/t-rex-gdal/Cargo.toml b/t-rex-gdal/Cargo.toml
+index 13075c9..cdc2732 100644
+--- a/t-rex-gdal/Cargo.toml
++++ b/t-rex-gdal/Cargo.toml
+@@ -13,8 +13,8 @@ workspace = ".."
+ doctest = false
+ 
+ [dependencies]
+-gdal = "0.14"
+-gdal-sys = "0.8"
++gdal = "0.15"
++gdal-sys = { version = "0.9", features = ["bindgen"] }
+ log = "0.4"
+ tile-grid = "0.3.0"
+ t-rex-core = { path = "../t-rex-core" }
+diff --git a/t-rex-gdal/src/gdal_fields.rs b/t-rex-gdal/src/gdal_fields.rs
+index 431707d..beab2cd 100644
+--- a/t-rex-gdal/src/gdal_fields.rs
++++ b/t-rex-gdal/src/gdal_fields.rs
+@@ -349,7 +349,7 @@ pub(crate) fn geom_spatialref<'d>(
+             None
+         }
+     } else {
+-        ogr_layer.spatial_ref().ok()
++        ogr_layer.spatial_ref()
+     }
+ }
+ 
+@@ -427,7 +427,7 @@ impl<'a> Feature for VectorFeature<'a> {
+         let ogrgeom = if let Some(ref field) = self.layer.geometry_field {
+             self.feature.geometry_by_name(field).unwrap()
+         } else {
+-            self.feature.geometry()
++            self.feature.geometry().unwrap()
+         };
+         let mut ogrgeom = ogrgeom.clone();
+         if let Some(ref transform) = self.transform {
+-- 
+2.42.0
+
